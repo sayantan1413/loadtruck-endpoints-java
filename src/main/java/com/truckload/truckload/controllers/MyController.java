@@ -22,31 +22,62 @@ public class MyController {
 	@Autowired
 	public LoadService loadService;
 	
+	// A home endpoint to about the application
+	
 	@GetMapping("/home")
 	public String home() {
 		return "Welcome to Truck load application";
 	}
 	
+	// A load endpoint which will expect a ahipperId and 
+	// will display all the list of loads with that shipperId
+	
 	@GetMapping("/load")
-	public List<Load> getCourses(@RequestParam String shipperId) {
-		return this.loadService.getLoads(Long.parseLong(shipperId));
+	public ResponseEntity<List<Load>> getLoades(@RequestParam String shipperId) {
+		try {
+			return new ResponseEntity<List<Load>> (this.loadService.getLoads(Long.parseLong(shipperId)), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
+	
+	// A load endpoint which will have a load Id (Primary Key)
+	// will return the particular load with that given ID
 	
 	@GetMapping("/load/{loadId}")
-	public Load getCourse(@PathVariable String loadId) {
-		return this.loadService.getLoad(Long.parseLong(loadId));
+	public ResponseEntity<Load> getLoad(@PathVariable String loadId) {
+		try {
+			return new ResponseEntity<Load>(this.loadService.getLoad(Long.parseLong(loadId)), HttpStatus.OK);
+		} catch (Exception e){
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 	
+	// A load endpoint which will send a POST request to
+	// add a load in the database
+	
 	@PostMapping("/load")
-	public Load addCourse(@RequestBody Load course) {
-		return this.loadService.addLoad(course);
+	public ResponseEntity<Load> addLoad(@RequestBody Load load) {
+		try {
+			return new ResponseEntity<Load>(this.loadService.addLoad(load), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
-	//Updating a method
+	
+	// A load endpoint which will have a load Id (Primary Key)
+	// and a updated data which will be send to update an existing data
+	
 	@PutMapping("/load/{loadId}")
-	public void updateCourse(@RequestBody Load load, @PathVariable String loadId) {
+	public void updateLoad(@RequestBody Load load, @PathVariable String loadId) {
 		//Load existCourse = getCourse(courseId);
 		this.loadService.updateLoad(load);
 	}
+	
+	// A load endpoint which will contain a load Id (Primary Key)
+	// will be send as a Delete request to delete the particular load with that id
 	
 	@DeleteMapping("/load/{loadId}")
 	public ResponseEntity<HttpStatus> deleteCourse(@PathVariable String loadId) {
